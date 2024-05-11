@@ -51,7 +51,7 @@ function normalizeArrayChildren (children: any, nestedIndex?: string): Array<VNo
     //  nested
     if (Array.isArray(c)) {
       if (c.length > 0) {
-        c = normalizeArrayChildren(c, `${nestedIndex || ''}_${i}`)
+        c = normalizeArrayChildren(c, `${nestedIndex || ''}_${i}`) //递归遍历节点
         // merge adjacent text nodes
         if (isTextNode(c[0]) && isTextNode(last)) {
           res[lastIndex] = createTextVNode(last.text + (c[0]: any).text)

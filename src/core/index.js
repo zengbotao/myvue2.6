@@ -22,5 +22,5 @@ Object.defineProperty(Vue, 'FunctionalRenderContext', {
 })
 
 Vue.version = '__VERSION__'
-
+// vue入口，补充ssr相关的
 export default Vue
