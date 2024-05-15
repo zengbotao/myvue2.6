@@ -28,6 +28,15 @@ export function simpleNormalizeChildren (children: any) {
 // e.g. <template>, <slot>, v-for, or when the children is provided by user
 // with hand-written render functions / JSX. In such cases a full normalization
 // is needed to cater to all possible types of children values.
+
+// 1.5.1 normalizeArrayChildren 接收 2 个参数：
+// 1. children：表示要规范的子节点；
+// 2. nestedIndex：表示嵌套的索引；
+// 因为单个 child 可能是一个数组类型。 normalizeArrayChildren 主要的逻辑就是遍历 children，获得单个节点 c，然后对 c 的类型判断：
+// 1. 如果是一个数组类型，则递归调用 normalizeArrayChildren; 
+// 2. 如果是基础类型，则通过 createTextVNode 方法转换成 VNode 类型；否则就已经是 VNode 类型了，如果 children 是一个列表并且列表还存在嵌套的情况，则根据 nestedIndex 去更新它的 key；
+// 注意：在遍历的过程中，如果存在两个连续的 text 节点，会把它们合并成一个 text 节点
+// 然后，children就变为了VNode的单节点或者数组了
 export function normalizeChildren (children: any): ?Array<VNode> {
   return isPrimitive(children)
     ? [createTextVNode(children)]

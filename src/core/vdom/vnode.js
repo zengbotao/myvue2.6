@@ -1,5 +1,5 @@
 /* @flow */
-
+// 1.4 Virtual DOM 是用 VNode 这么一个 Class
 export default class VNode {
   tag: string | void;
   data: VNodeData | void;

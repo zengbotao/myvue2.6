@@ -1,6 +1,13 @@
+/*
+ * @Description: 
+ * @Autor: zengbotao@myhexin.com
+ * @Date: 2022-05-02 17:47:22
+ * @LastEditors: 
+ * @LastEditTime: 2024-05-15 12:39:27
+ */
 /* @flow */
-
-import Vue from 'core/index'
+// 1.1不同场景下对vue进行加工
+import Vue from 'core/index' //1.1vue入口
 import config from 'core/config'
 import { extend, noop } from 'shared/util'
 import { mountComponent } from 'core/instance/lifecycle'
@@ -30,10 +37,12 @@ Vue.config.isUnknownElement = isUnknownElement
 extend(Vue.options.directives, platformDirectives)
 extend(Vue.options.components, platformComponents)
 
+// 1.6 web 和 weex 上的定义是不一样的，因此在 web 平台中它的定义在 src/platforms/web/runtime/index.js 中：
 // install platform patch function
 Vue.prototype.__patch__ = inBrowser ? patch : noop
 
 // public mount method
+// Vue实例挂载的实现
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean

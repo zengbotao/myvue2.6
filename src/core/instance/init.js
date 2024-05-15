@@ -12,11 +12,13 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 
 let uid = 0
 
+// 1.1初始化Vue实例。该代码的主要功能是负责初始化Vue实例，
+// 包括设置UID、优化组件创建过程、处理生命周期钩子和事件系统、处理状态管理和提供者系统等。
 export function initMixin (Vue: Class<Component>) {
   Vue.prototype._init = function (options?: Object) {
     const vm: Component = this
     // a uid
-    vm._uid = uid++
+    vm._uid = uid++//为每个Vue实例分配了一个UID。这是Vue用来区分每个组件实例的方法。
 
     let startTag, endTag
     /* istanbul ignore if */
@@ -49,11 +51,13 @@ export function initMixin (Vue: Class<Component>) {
     } else {
       vm._renderProxy = vm
     }
+
+    // 1.1通过调用多个初始化生命周期、事件系统和渲染系统的函数来进行实例的配置。这些初始化函数分别位于不同的模块，包括lifecycle、events和render。
     // expose real self
     vm._self = vm
     initLifecycle(vm)
     initEvents(vm)
-    initRender(vm)
+    initRender(vm) //1.1核心******
     callHook(vm, 'beforeCreate')
     initInjections(vm) // resolve injections before data/props
     initState(vm)
@@ -67,6 +71,7 @@ export function initMixin (Vue: Class<Component>) {
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
 
+    //1.1-》1.2如果有定义的根元素，则将Vue实例挂载到这个根元素上。
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }

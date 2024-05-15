@@ -1,3 +1,10 @@
+/*
+ * @Description: 
+ * @Autor: zengbotao@myhexin.com
+ * @Date: 2022-05-02 17:47:22
+ * @LastEditors: 
+ * @LastEditTime: 2024-05-15 19:28:25
+ */
 /* @flow */
 
 import { parse } from './parser/index'
@@ -16,6 +23,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   if (options.optimize !== false) {
     optimize(ast, options)
   }
+  //options.render的由来
   const code = generate(ast, options)
   return {
     ast,

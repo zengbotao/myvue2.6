@@ -67,6 +67,8 @@ function createKeyToOldIdx (children, beginIdx, endIdx) {
   return map
 }
 
+// 1.6createPatchFunction 内部定义了一系列的辅助方法，最终返回了一个 patch 方法，这个方法就赋值给了 vm._update 函数里调用的 vm.__patch__。
+
 export function createPatchFunction (backend) {
   let i, j
   const cbs = {}
@@ -697,6 +699,20 @@ export function createPatchFunction (backend) {
     }
   }
 
+
+  //1.6返回patch方法
+//   Q：为何 Vue.js 源码绕了这么一大圈，把相关代码分散到各个目录？
+// A：
+// 1. 因为patch 是平台相关的，在 Web 和 Weex 环境，它们把虚拟 DOM 映射到 “平台 DOM” 的方法是不同的，并且对 “DOM” 包括的属性模块创建和更新也不尽相同。因此每个平台都有各自的 nodeOps 和 modules，它们的代码需要托管在 src/platforms 这个大目录下；
+// 2. 不同平台的 patch 的主要逻辑部分是相同的，所以这部分公共的部分托管在 core 这个大目录下。差异化部分只需要通过参数nodeOps 和 modules 来区分：
+//   1. nodeOps 表示对 “平台 DOM” 的一些操作方法；
+//   2. modules 表示平台的一些模块，它们会在整个 patch 过程的不同阶段执行相应的钩子函数；
+
+// 回到 patch 方法本身，它接收 4个参数：
+// 1. oldVnode 表示旧的 VNode 节点，它也可以不存在或者是一个 DOM 对象；
+// 2. vnode 表示执行 _render 后返回的 VNode 的节点；
+// 3. hydrating 表示是否是服务端渲染；
+// 4. removeOnly 是给 transition-group 用的；
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)

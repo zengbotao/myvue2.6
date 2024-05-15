@@ -56,6 +56,9 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
+
+  // 1.6 Vue 的 _update 是实例的一个私有方法，它被调用的时机有 2 个，一个是首次渲染，一个是数据更新的时候；
+  // _update 方法的作用是把 VNode 渲染成真实的 DOM，
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     const prevEl = vm.$el
@@ -64,6 +67,9 @@ export function lifecycleMixin (Vue: Class<Component>) {
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
+
+    // 1.6_update 的核心就是调用 vm.__patch__ 方法，
+    // 这个方法实际上在不同的平台，比如 web 和 weex 上的定义是不一样的，
     if (!prevVnode) {
       // initial render
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
@@ -138,6 +144,12 @@ export function lifecycleMixin (Vue: Class<Component>) {
   }
 }
 
+// 1.2-》1.3这里面核心就是先实例化一个渲染Watcher，在它的回调函数中会调用 updateComponent 方法，
+// 在此方法中调用 vm._render 方法先生成虚拟 Node，最终调用 vm._update 更新 DOM。
+// Watcher 在这里起到两个作用：（后面会详细讲解）
+// 1. 初始化的时候会执行回调函数；
+// 2. 当 vm 实例中的监测的数据发生变化的时候执行回调函数；
+// 函数最后判断当根节点vm.$vnode为null时，执行mount初始化；接下来详细讲_render（生成VNode）和_update（更新DOM）
 export function mountComponent (
   vm: Component,
   el: ?Element,
