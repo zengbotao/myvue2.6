@@ -28,12 +28,23 @@ const idToTemplate = cached(id => {
 //   render: (h) => h(App)
 // }).$mount('#app')
 
+// new Vue({
+//   el: '#app',  //=》$mount('#app')
+//   router,
+//   template: '<App/>',
+//   components: { App }
+// })
+
 // 1.2在初始化的最后，检测到如果有 el 属性，则调用 vm.$mount 方法挂载 vm，挂载的目标就是把模板渲染成最终的 DOM，那么接下来我们来分析 Vue 的挂载过程。
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
 ): Component {
+
+
+  // console.log(el,hydrating);
+
   // 1.2$mount 方法支持传入 2 个参数，第一个是 el，它表示挂载的元素，可以是字符串，也可以是 DOM 对象，
   // 如果是字符串在浏览器环境下会调用 query 方法转换成 DOM 对象的。
   // 第二个参数是和服务端渲染相关，在浏览器环境下我们不需要传第二个参数。
@@ -45,9 +56,22 @@ Vue.prototype.$mount = function (
       `Do not mount Vue to <html> or <body> - mount to normal elements instead.`
     )
     return this
+    
+
   }
 
   const options = this.$options
+  // console.log(this,options);
+  //   {
+  //     "components": {},
+  //     "directives": {},
+  //     "filters": {},
+  //     "el": "#app",
+  //     "template": "<div>{{message}}</div>",
+  //     "staticRenderFns": []
+  // }
+
+
   // resolve template/el and convert to render function
   // 1.2. 如果没有定义 render 方法，则会把 el 或者 template 字符串转换成 render 方法。
   // 在 Vue 2.0 版本中，所有 Vue 的组件的渲染最终都需要 render 方法，无论我们是用单文件 .vue 方式开发组件，
@@ -56,6 +80,7 @@ Vue.prototype.$mount = function (
     let template = options.template
     if (template) {
       if (typeof template === 'string') {
+        // console.log(template,template.charAt(0) === '#');
         if (template.charAt(0) === '#') {
           template = idToTemplate(template)
           /* istanbul ignore if */
@@ -77,8 +102,7 @@ Vue.prototype.$mount = function (
     } else if (el) {
       template = getOuterHTML(el)//没有写，额外生成一个div
     }
-
-
+    // console.log(template,this);
 
     if (template) {
       /* istanbul ignore if */
@@ -88,6 +112,20 @@ Vue.prototype.$mount = function (
 
       //render在不同场景下的定义，通过函数生成
       // 1.2. 根据生成的template函数，会执行在线编译的过程，是调用 compileToFunctions 方法实现的，在后续的编译过程中讲解。最后，调用原先原型上的 $mount 方法挂载；
+  //    console.log({
+  //     outputSourceRange: process.env.NODE_ENV !== 'production',
+  //     shouldDecodeNewlines,
+  //     shouldDecodeNewlinesForHref,
+  //     delimiters: options.delimiters,
+  //     comments: options.comments
+  //   });
+  //   {
+  //     "outputSourceRange": true,
+  //     "shouldDecodeNewlines": false,
+  //     "shouldDecodeNewlinesForHref": false
+  // }
+
+    // " template <div>{{message}}</div>"
       const { render, staticRenderFns } = compileToFunctions(template, {
         outputSourceRange: process.env.NODE_ENV !== 'production',
         shouldDecodeNewlines,
@@ -105,7 +143,10 @@ Vue.prototype.$mount = function (
       }
     }
   }
-  return mount.call(this, el, hydrating)//this就是vue实例，el：要挂载的元素‘#app’
+  console.log(this,'mount.call(this, el, hydrating)',mount);
+
+
+  return mount.call(this, el, hydrating)//this就是vue实例，el：要挂载的元素‘#app’，是所有的申明好了，最后才调用$mount
 }
 
 /**

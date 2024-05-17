@@ -155,6 +155,8 @@ export function mountComponent (
   el: ?Element,
   hydrating?: boolean
 ): Component {
+  console.log('mountComponent', vm,  el);
+
   vm.$el = el
   if (!vm.$options.render) {
     vm.$options.render = createEmptyVNode
@@ -176,6 +178,8 @@ export function mountComponent (
       }
     }
   }
+
+
   callHook(vm, 'beforeMount')
 
   let updateComponent
@@ -348,6 +352,7 @@ export function deactivateChildComponent (vm: Component, direct?: boolean) {
 
 export function callHook (vm: Component, hook: string) {
   // #7573 disable dep collection when invoking lifecycle hooks
+  console.log('callHook',vm, hook);
   pushTarget()
   const handlers = vm.$options[hook]
   const info = `${hook} hook`

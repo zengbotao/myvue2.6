@@ -23,40 +23,55 @@ import VNode, { createEmptyVNode } from '../vdom/vnode'
 
 import { isUpdatingChildComponent } from './lifecycle'
 
+// 初始化渲染函数
 export function initRender (vm: Component) {
-  vm._vnode = null // the root of the child tree
-  vm._staticTrees = null // v-once cached trees
+  // _vnode 用于存储根节点的子树，初始值为 null
+  vm._vnode = null 
+  
+  // _staticTrees 用于存储缓存的树，初始值为 null
+  vm._staticTrees = null 
+  
+  // 获取组件的选项
   const options = vm.$options
-  const parentVnode = vm.$vnode = options._parentVnode // the placeholder node in parent tree
+  
+  // 获取父级的虚拟节点作为占位符节点在父级树中
+  const parentVnode = vm.$vnode = options._parentVnode 
+  
+  // 获取渲染上下文
   const renderContext = parentVnode && parentVnode.context
+  
+  // 解析插槽
   vm.$slots = resolveSlots(options._renderChildren, renderContext)
+  
+  // $scopedSlots 用于存储作用域插槽，初始值为空对象
   vm.$scopedSlots = emptyObject
-  // bind the createElement fn to this instance
-  // so that we get proper render context inside it.
-  // args order: tag, data, children, normalizationType, alwaysNormalize
-  // internal version is used by render functions compiled from templates
+  
+  // 将 createElement 函数绑定到当前实例，以便我们可以在其中获得正确的渲染上下文
+  // args 顺序：标签，数据，子节点，规范类型，总是进行规范化
+  // 内部版本用于从模板编译成的渲染函数
   vm._c = (a, b, c, d) => createElement(vm, a, b, c, d, false)
-  // normalization is always applied for the public version, used in
-  // user-written render functions.
+  
+  // 规范化始终应用于公共版本，用于用户编写的渲染函数
   vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
-
-  // $attrs & $listeners are exposed for easier HOC creation.
-  // they need to be reactive so that HOCs using them are always updated
+  
+  // $attrs & $listeners 暴露出来以便于更容易地创建高阶组件。
+  // 它们需要是响应式的，这样HOCs使用它们就能保持最新状态
   const parentData = parentVnode && parentVnode.data
-
+  
   /* istanbul ignore else */
   if (process.env.NODE_ENV !== 'production') {
     defineReactive(vm, '$attrs', parentData && parentData.attrs || emptyObject, () => {
-      !isUpdatingChildComponent && warn(`$attrs is readonly.`, vm)
+      !isUpdatingChildComponent && warn(`$attrs 是只读的。`, vm)
     }, true)
     defineReactive(vm, '$listeners', options._parentListeners || emptyObject, () => {
-      !isUpdatingChildComponent && warn(`$listeners is readonly.`, vm)
+      !isUpdatingChildComponent && warn(`$listeners 是只读的。`, vm)
     }, true)
   } else {
     defineReactive(vm, '$attrs', parentData && parentData.attrs || emptyObject, null, true)
     defineReactive(vm, '$listeners', options._parentListeners || emptyObject, null, true)
   }
 }
+
 
 export let currentRenderingInstance: Component | null = null
 

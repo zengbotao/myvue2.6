@@ -80,6 +80,8 @@ export function parse (
   template: string,
   options: CompilerOptions
 ): ASTElement | void {
+  console.log('parse 参数', template,options);
+
   warn = options.warn || baseWarn
 
   platformIsPreTag = options.isPreTag || no
